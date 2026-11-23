@@ -143,6 +143,7 @@
 ```json
 {
   "version": "v0.1.0",
+  "prerelease": false,
   "protocol_version": 1,
   "commit": "abc1234",
   "build_time": "2026-11-23T02:55:00Z",

@@ -9,6 +9,10 @@ COMMIT="${COMMIT:-$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")}"
 BUILD_TIME="${BUILD_TIME:-$(date -u +"%Y-%m-%dT%H:%M:%SZ")}"
 PROTOCOL_VERSION="$(awk -F= '/const ProtocolVersion/ { gsub(/[^0-9]/, "", $2); print $2; exit }' internal/version/version.go)"
 PROTOCOL_VERSION="${PROTOCOL_VERSION:-1}"
+PRERELEASE=false
+case "$VERSION" in
+  *-*) PRERELEASE=true ;;
+esac
 
 OUT_DIR="${OUT_DIR:-$ROOT_DIR/dist}"
 TARGETS=("linux/amd64" "linux/arm64" "darwin/amd64" "darwin/arm64")
@@ -84,6 +88,7 @@ done
 cat > "$MANIFEST_FILE" <<EOF
 {
   "version": "${VERSION}",
+  "prerelease": ${PRERELEASE},
   "protocol_version": ${PROTOCOL_VERSION},
   "commit": "${COMMIT}",
   "build_time": "${BUILD_TIME}",

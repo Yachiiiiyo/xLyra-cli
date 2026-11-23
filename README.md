@@ -37,6 +37,16 @@ VERSION=v0.1.0 make release
 输出目录 `dist/` 包含：
 - `xlyra-cli_<version>_<os>_<arch>.tar.gz`：内含根目录可执行文件 `xlyra-cli`
 - `checksums.txt`：所有压缩包的 SHA-256 校验值
-- `manifest.json`：包含 `version`、`protocol_version`、`commit`、`build_time` 与各平台 `filename` / `sha256` / `size`，供主程序 `xlyra-server` 下载与自动更新器校验使用
+- `manifest.json`：包含 `version`、`prerelease`、`protocol_version`、`commit`、`build_time` 与各平台 `filename` / `sha256` / `size`，供主程序 `xlyra-server` 下载与自动更新器校验使用
 
-推送 `v*` 标签或通过 GitHub Actions `workflow_dispatch` 触发 `.github/workflows/release.yml` 即可自动构建并发布上述全部产物到 GitHub Release。
+### 标准发版流程
+
+```bash
+# 1. 在干净的 main 分支运行校验并创建 SemVer annotated tag
+./scripts/tag-release.sh v0.1.0
+
+# 2. 推送标签触发 .github/workflows/release.yml 自动打包并发布到 GitHub Release
+git push origin v0.1.0
+```
+
+> 含 `-` 的预发布标签（如 `v0.1.0-rc.1`）会自动标记为 GitHub Pre-release，并在 `manifest.json` 中置 `"prerelease": true`，不会覆盖 `/releases/latest`。也可通过 GitHub Actions `workflow_dispatch` 手动触发发版。
