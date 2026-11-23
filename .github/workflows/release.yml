@@ -27,7 +27,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-          cache: true
+          cache: false
 
       - name: Run tests
         run: go vet ./... && go test -race ./...
@@ -64,6 +64,6 @@ jobs:
           prerelease: ${{ steps.meta.outputs.prerelease == 'true' }}
           generate_release_notes: true
           files: |
-            dist/xlyra-cli_*.tar.gz
+            dist/xlyra_*.tar.gz
             dist/checksums.txt
             dist/manifest.json

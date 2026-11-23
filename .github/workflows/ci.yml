@@ -16,7 +16,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-          cache: true
+          cache: false
 
       - name: Vet
         run: go vet ./...
@@ -30,5 +30,5 @@ jobs:
             GOOS="${target%/*}"
             GOARCH="${target#*/}"
             echo "Checking ${GOOS}/${GOARCH}..."
-            CGO_ENABLED=0 GOOS="$GOOS" GOARCH="$GOARCH" go build -trimpath -o /dev/null ./cmd/xlyra-cli
+            CGO_ENABLED=0 GOOS="$GOOS" GOARCH="$GOARCH" go build -trimpath -o /dev/null ./cmd/xlyra
           done

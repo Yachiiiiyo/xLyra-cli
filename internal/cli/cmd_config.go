@@ -10,7 +10,7 @@ import (
 )
 
 func (a *App) runStatus(ctx context.Context, args []string) int {
-	parsed, ok, code := a.parse(args, nil, "用法: xlyra-cli status")
+	parsed, ok, code := a.parse(args, nil, "用法: xlyra status")
 	if !ok {
 		return code
 	}
@@ -24,7 +24,7 @@ func (a *App) runStatus(ctx context.Context, args []string) int {
 }
 
 func (a *App) runSchema(ctx context.Context, args []string) int {
-	parsed, ok, code := a.parse(args, nil, "用法: xlyra-cli schema [domain]")
+	parsed, ok, code := a.parse(args, nil, "用法: xlyra schema [domain]")
 	if !ok {
 		return code
 	}
@@ -41,13 +41,13 @@ func (a *App) runSchema(ctx context.Context, args []string) int {
 
 func (a *App) runConfig(ctx context.Context, args []string) int {
 	const help = `用法:
-  xlyra-cli config list
-  xlyra-cli config describe <dot.path>
-  xlyra-cli config get <dot.path>
-  xlyra-cli config set <dot.path> <val>
-  xlyra-cli config set <k1=v1> [k2=v2 ...]
-  xlyra-cli config patch <domain> (--json '{...}' | --file <path> | --stdin)
-  xlyra-cli config reset <dot.path>`
+  xlyra config list
+  xlyra config describe <dot.path>
+  xlyra config get <dot.path>
+  xlyra config set <dot.path> <val>
+  xlyra config set <k1=v1> [k2=v2 ...]
+  xlyra config patch <domain> (--json '{...}' | --file <path> | --stdin)
+  xlyra config reset <dot.path>`
 
 	if len(args) == 0 {
 		_, _ = fmt.Fprintln(a.Stdout, help)

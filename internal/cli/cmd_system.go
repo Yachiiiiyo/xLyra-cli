@@ -10,7 +10,7 @@ import (
 
 func (a *App) runAgentsMD(ctx context.Context, args []string) int {
 	const help = `用法:
-  xlyra-cli agents-md get`
+  xlyra agents-md get`
 
 	if len(args) == 0 || args[0] == "-h" || args[0] == "--help" {
 		_, _ = fmt.Fprintln(a.Stdout, help)
@@ -31,7 +31,7 @@ func (a *App) runAgentsMD(ctx context.Context, args []string) int {
 	case "set", "put", "update", "delete":
 		return a.failPolicy(
 			extractRequestedFormat(args[1:]),
-			"AGENTS.md 属于 Agent 自身配置（Tier 0），禁止通过 xlyra-cli 修改",
+			"AGENTS.md 属于 Agent 自身配置（Tier 0），禁止通过 xlyra 修改",
 			"agents-md",
 			"请让管理员在 Web 控制台的 Agent 设置中修改",
 		)
@@ -42,8 +42,8 @@ func (a *App) runAgentsMD(ctx context.Context, args []string) int {
 
 func (a *App) runSkill(ctx context.Context, args []string) int {
 	const help = `用法:
-  xlyra-cli skill list
-  xlyra-cli skill get <name>`
+  xlyra skill list
+  xlyra skill get <name>`
 
 	if len(args) == 0 || args[0] == "-h" || args[0] == "--help" {
 		_, _ = fmt.Fprintln(a.Stdout, help)
@@ -73,7 +73,7 @@ func (a *App) runSkill(ctx context.Context, args []string) int {
 	case "put", "create", "set", "update", "delete":
 		return a.failPolicy(
 			extractRequestedFormat(args[1:]),
-			"skills/* 属于 Agent 自身配置（Tier 0），禁止通过 xlyra-cli 修改",
+			"skills/* 属于 Agent 自身配置（Tier 0），禁止通过 xlyra 修改",
 			"skills",
 			"请让管理员在 Web 控制台的 Agent 设置中管理技能",
 		)
@@ -84,10 +84,10 @@ func (a *App) runSkill(ctx context.Context, args []string) int {
 
 func (a *App) runBackup(ctx context.Context, args []string) int {
 	const help = `用法:
-  xlyra-cli backup sections
-  xlyra-cli backup auto-test
-  xlyra-cli backup auto-files
-  xlyra-cli backup auto-run`
+  xlyra backup sections
+  xlyra backup auto-test
+  xlyra backup auto-files
+  xlyra backup auto-run`
 
 	if len(args) == 0 || args[0] == "-h" || args[0] == "--help" {
 		_, _ = fmt.Fprintln(a.Stdout, help)
@@ -119,8 +119,8 @@ func (a *App) runBackup(ctx context.Context, args []string) int {
 
 func (a *App) runCloud(ctx context.Context, args []string) int {
 	const help = `用法:
-  xlyra-cli cloud status
-  xlyra-cli cloud report-preview`
+  xlyra cloud status
+  xlyra cloud report-preview`
 
 	if len(args) == 0 || args[0] == "-h" || args[0] == "--help" {
 		_, _ = fmt.Fprintln(a.Stdout, help)
@@ -146,8 +146,8 @@ func (a *App) runCloud(ctx context.Context, args []string) int {
 
 func (a *App) runDashboard(ctx context.Context, args []string) int {
 	const help = `用法:
-  xlyra-cli dashboard overview [--window-hours 24]
-  xlyra-cli dashboard insights [--window-hours 24]`
+  xlyra dashboard overview [--window-hours 24]
+  xlyra dashboard insights [--window-hours 24]`
 
 	if len(args) == 0 || args[0] == "-h" || args[0] == "--help" {
 		_, _ = fmt.Fprintln(a.Stdout, help)
@@ -178,10 +178,10 @@ func (a *App) runDashboard(ctx context.Context, args []string) int {
 
 func (a *App) runRequest(ctx context.Context, args []string) int {
 	const help = `用法:
-  xlyra-cli request list [--site S] [--model M] [--status S] [--days 1..7] [--limit 1..50] [--page P]
-  xlyra-cli request get <request-id>
-  xlyra-cli request summary [--days 1..7]
-  xlyra-cli request channel-split [--days 1..7]`
+  xlyra request list [--site S] [--model M] [--status S] [--days 1..7] [--limit 1..50] [--page P]
+  xlyra request get <request-id>
+  xlyra request summary [--days 1..7]
+  xlyra request channel-split [--days 1..7]`
 
 	if len(args) == 0 || args[0] == "-h" || args[0] == "--help" {
 		_, _ = fmt.Fprintln(a.Stdout, help)
@@ -240,8 +240,8 @@ func (a *App) runRequest(ctx context.Context, args []string) int {
 
 func (a *App) runUsage(ctx context.Context, args []string) int {
 	const help = `用法:
-  xlyra-cli usage summary [--days 1..7]
-  xlyra-cli usage api-keys [--days 1..7]`
+  xlyra usage summary [--days 1..7]
+  xlyra usage api-keys [--days 1..7]`
 
 	if len(args) == 0 || args[0] == "-h" || args[0] == "--help" {
 		_, _ = fmt.Fprintln(a.Stdout, help)

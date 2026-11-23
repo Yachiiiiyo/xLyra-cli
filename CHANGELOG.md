@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.1.1] - 2026-11-23
+
+### Changed
+- **可执行文件与 Release 产物更名为 `xlyra`**：入口迁移至 `cmd/xlyra`，压缩包命名改为 `xlyra_<version>_<os>_<arch>.tar.gz`（包内根目录可执行文件为 `xlyra`），并同步更新帮助文本、User-Agent、协议规范与文档。
+- **CI/Release 优化**：在零外部依赖（无 `go.sum`）情况下关闭 `setup-go` 缓存查找，消除流水线缓存未找到告警。
+
 ## [v0.1.0] - 2026-11-23
 
 ### Added

@@ -1,6 +1,6 @@
-# `xlyra-cli` Control-Plane v1 协议规范
+# `xlyra` Control-Plane v1 协议规范
 
-本文档定义 `xlyra-cli` 与 `xlyra-server` (`agentctl.Server`) 之间的 Unix Domain Socket 通信契约以及 GitHub Release 产物清单格式（供主程序实现自动下载、校验与版本更新）。
+本文档定义 `xlyra`（`xLyra-cli`）与 `xlyra-server` (`agentctl.Server`) 之间的 Unix Domain Socket 通信契约以及 GitHub Release 产物清单格式（供主程序实现自动下载、校验与版本更新）。
 
 ---
 
@@ -15,7 +15,7 @@
   - `localBash` 模式下，服务端强制校验 `X-Xlyra-Ctl-Nonce` 与当前活动 run 绑定一致；
   - 所有请求携带 `X-Xlyra-Ctl-Protocol: 1`。
 - **超时与取消**：
-  - `xlyra-cli` 不设客户端请求固定超时，允许服务端阻塞等待人工审批卡片确认（沙箱模式下由 `exec.sock` 下发 `{"t":"timer","action":"pause"|"resume"}` 暂停/恢复命令超时）；
+  - `xlyra` 不设客户端请求固定超时，允许服务端阻塞等待人工审批卡片确认（沙箱模式下由 `exec.sock` 下发 `{"t":"timer","action":"pause"|"resume"}` 暂停/恢复命令超时）；
   - 当进程收到 `SIGINT`/`SIGTERM` 时取消 HTTP 请求上下文并立即断开 UDS 连接，服务端感知 `r.Context().Done()` 后清理挂起审批。
 
 ---
@@ -77,7 +77,7 @@
   "ok": false,
   "error": {
     "code": "policy_denied",
-    "message": "agent.capabilities.* 属于 Agent 自身配置（Tier 0），禁止通过 xlyra-cli 修改",
+    "message": "agent.capabilities.* 属于 Agent 自身配置（Tier 0），禁止通过 xlyra 修改",
     "field": "agent.capabilities.sandbox_enabled",
     "hint": "请让管理员在 Web 控制台的 Agent 设置中手动调整"
   }
@@ -136,13 +136,13 @@
 ## 5. Release 资产与 `manifest.json` 规范（主程序下载更新对接）
 
 每次 Release 发布以下资产：
-- `xlyra-cli_<version>_<os>_<arch>.tar.gz`（包含根目录可执行文件 `xlyra-cli`，覆盖 `linux/amd64`、`linux/arm64`、`darwin/amd64`、`darwin/arm64`）
+- `xlyra_<version>_<os>_<arch>.tar.gz`（包含根目录可执行文件 `xlyra`，覆盖 `linux/amd64`、`linux/arm64`、`darwin/amd64`、`darwin/arm64`）
 - `checksums.txt`（标准 SHA-256 校验文件）
 - `manifest.json`（机器可读元信息清单）：
 
 ```json
 {
-  "version": "v0.1.0",
+  "version": "v0.1.1",
   "prerelease": false,
   "protocol_version": 1,
   "commit": "abc1234",
@@ -151,7 +151,7 @@
     "linux/amd64": {
       "os": "linux",
       "arch": "amd64",
-      "filename": "xlyra-cli_v0.1.0_linux_amd64.tar.gz",
+      "filename": "xlyra_v0.1.1_linux_amd64.tar.gz",
       "sha256": "...",
       "size": 3145728
     }
@@ -159,4 +159,4 @@
 }
 ```
 
-主程序下载器可通过 `xlyra-cli version`（无需 `XLYRA_CTL_SOCK`）获取本地已安装二进制的 `version` 与 `protocol_version`，再对比 Release 中的 `manifest.json` 完成按需更新与 SHA-256 校验。
+主程序下载器可通过 `xlyra version`（无需 `XLYRA_CTL_SOCK`）获取本地已安装二进制的 `version` 与 `protocol_version`，再对比 Release 中的 `manifest.json` 完成按需更新与 SHA-256 校验。

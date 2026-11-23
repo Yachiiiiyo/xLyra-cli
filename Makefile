@@ -10,7 +10,7 @@ LDFLAGS := -s -w \
 
 build:
 	@mkdir -p bin
-	CGO_ENABLED=0 go build -trimpath -ldflags="$(LDFLAGS)" -o bin/xlyra-cli ./cmd/xlyra-cli
+	CGO_ENABLED=0 go build -trimpath -ldflags="$(LDFLAGS)" -o bin/xlyra ./cmd/xlyra
 
 vet:
 	go vet ./...

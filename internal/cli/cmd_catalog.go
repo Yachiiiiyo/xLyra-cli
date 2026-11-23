@@ -11,15 +11,15 @@ import (
 
 func (a *App) runModel(ctx context.Context, args []string) int {
 	const help = `用法:
-  xlyra-cli model list [--provider P] [--category C] [--search Q]
-  xlyra-cli model get <id|model_key> [--matrix]
-  xlyra-cli model create (--json '{...}' | --model-key K --display-name N --provider P ...)
-  xlyra-cli model update <id|model_key> (--json '{...}' | flags...)
-  xlyra-cli model delete <id|model_key>
-  xlyra-cli model alias add <model> <alias>
-  xlyra-cli model alias delete <model> <alias-id>
-  xlyra-cli model pricing set <model> [--input F] [--output F] [--cache-read-ratio F] [--cache-write-ratio F] [--cache-write-1h-ratio F]
-  xlyra-cli model pricing reset <model>`
+  xlyra model list [--provider P] [--category C] [--search Q]
+  xlyra model get <id|model_key> [--matrix]
+  xlyra model create (--json '{...}' | --model-key K --display-name N --provider P ...)
+  xlyra model update <id|model_key> (--json '{...}' | flags...)
+  xlyra model delete <id|model_key>
+  xlyra model alias add <model> <alias>
+  xlyra model alias delete <model> <alias-id>
+  xlyra model pricing set <model> [--input F] [--output F] [--cache-read-ratio F] [--cache-write-ratio F] [--cache-write-1h-ratio F]
+  xlyra model pricing reset <model>`
 
 	if len(args) == 0 || args[0] == "-h" || args[0] == "--help" {
 		_, _ = fmt.Fprintln(a.Stdout, help)
@@ -224,13 +224,13 @@ func (a *App) runModelPricing(ctx context.Context, args []string, help string) i
 
 func (a *App) runSiteModel(ctx context.Context, args []string) int {
 	const help = `用法:
-  xlyra-cli site-model list [--site S] [--canonical M] [--enabled true|false]
-  xlyra-cli site-model create <site> --upstream-name N [--canonical M] [--endpoints ...] [--credential-ids ...] [--enabled B]
-  xlyra-cli site-model update <site> <model-id> [--enabled true|false] [--json '{...}']
-  xlyra-cli site-model batch-status <site> --ids id1,id2 --enabled true|false
-  xlyra-cli site-model bind-canonical <site-model-id> <canonical-model-id|none>
-  xlyra-cli site-model test <site> <model-id> [--protocol P] [--prompt ...]
-  xlyra-cli site-model delete <site> <model-id>`
+  xlyra site-model list [--site S] [--canonical M] [--enabled true|false]
+  xlyra site-model create <site> --upstream-name N [--canonical M] [--endpoints ...] [--credential-ids ...] [--enabled B]
+  xlyra site-model update <site> <model-id> [--enabled true|false] [--json '{...}']
+  xlyra site-model batch-status <site> --ids id1,id2 --enabled true|false
+  xlyra site-model bind-canonical <site-model-id> <canonical-model-id|none>
+  xlyra site-model test <site> <model-id> [--protocol P] [--prompt ...]
+  xlyra site-model delete <site> <model-id>`
 
 	if len(args) == 0 || args[0] == "-h" || args[0] == "--help" {
 		_, _ = fmt.Fprintln(a.Stdout, help)
@@ -403,10 +403,10 @@ func (a *App) runSiteModel(ctx context.Context, args []string) int {
 
 func (a *App) runPricing(ctx context.Context, args []string) int {
 	const help = `用法:
-  xlyra-cli pricing list [--site S]
-  xlyra-cli pricing set <site-model-id> (--json '{...}' | --file <path> | --stdin)
-  xlyra-cli pricing bulk-set (--json '{...}' | --file <path> | --stdin)
-  xlyra-cli pricing reset (<site-model-id> | --site <site>)`
+  xlyra pricing list [--site S]
+  xlyra pricing set <site-model-id> (--json '{...}' | --file <path> | --stdin)
+  xlyra pricing bulk-set (--json '{...}' | --file <path> | --stdin)
+  xlyra pricing reset (<site-model-id> | --site <site>)`
 
 	if len(args) == 0 || args[0] == "-h" || args[0] == "--help" {
 		_, _ = fmt.Fprintln(a.Stdout, help)

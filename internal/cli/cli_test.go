@@ -134,7 +134,7 @@ func TestVersionAndHelpWithoutSocket(t *testing.T) {
 
 	for _, helpArgs := range [][]string{nil, {"--help"}, {"help"}, {"help", "help"}, {"help", "site"}, {"site", "--help"}} {
 		code, out, _ := runCLIWithEnv(t, "", "", "", helpArgs...)
-		if code != protocol.ExitOK || !strings.Contains(out, "xlyra-cli") {
+		if code != protocol.ExitOK || !strings.Contains(out, "xlyra") {
 			t.Fatalf("help %v failed: code=%d out=%s", helpArgs, code, out)
 		}
 	}

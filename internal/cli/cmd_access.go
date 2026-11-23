@@ -11,18 +11,18 @@ import (
 
 func (a *App) runAPIKey(ctx context.Context, args []string) int {
 	const help = `用法:
-  xlyra-cli api-key list
-  xlyra-cli api-key get|rotate|delete <id|name>
-  xlyra-cli api-key create --name N [--json '{...}']
-  xlyra-cli api-key update <id|name> (--json '{...}' | --file <path> | --stdin)
-  xlyra-cli api-key reorder <id1,id2,...>
-  xlyra-cli api-key set-sites <id|name> --policy allow_all|allow_list [--ids id1,id2]
-  xlyra-cli api-key set-site-groups <id|name> --ids id1,id2
-  xlyra-cli api-key set-site-models <id|name> --policy allow_all|allow_list [--ids id1,id2]
-  xlyra-cli api-key set-mappings <id|name> (--json '[...]' | --file <path> | --stdin)
-  xlyra-cli api-key quota increase <id|name> --amount F
-  xlyra-cli api-key quota reset <id|name>
-  xlyra-cli api-key check-model <id|name> <model_key>`
+  xlyra api-key list
+  xlyra api-key get|rotate|delete <id|name>
+  xlyra api-key create --name N [--json '{...}']
+  xlyra api-key update <id|name> (--json '{...}' | --file <path> | --stdin)
+  xlyra api-key reorder <id1,id2,...>
+  xlyra api-key set-sites <id|name> --policy allow_all|allow_list [--ids id1,id2]
+  xlyra api-key set-site-groups <id|name> --ids id1,id2
+  xlyra api-key set-site-models <id|name> --policy allow_all|allow_list [--ids id1,id2]
+  xlyra api-key set-mappings <id|name> (--json '[...]' | --file <path> | --stdin)
+  xlyra api-key quota increase <id|name> --amount F
+  xlyra api-key quota reset <id|name>
+  xlyra api-key check-model <id|name> <model_key>`
 
 	if len(args) == 0 || args[0] == "-h" || args[0] == "--help" {
 		_, _ = fmt.Fprintln(a.Stdout, help)
@@ -212,11 +212,11 @@ func (a *App) runAPIKeyQuota(ctx context.Context, args []string, help string) in
 
 func (a *App) runRoute(ctx context.Context, args []string) int {
 	const help = `用法:
-  xlyra-cli route overview [--window-hours 24]
-  xlyra-cli route candidates <model_key> [--debug]
-  xlyra-cli route select --model <model_key> [--api-key ID] [--debug]
-  xlyra-cli route failover --model <model_key> --failed-site-ids id1,id2 [--debug]
-  xlyra-cli route traces [--model <model_key>] [--limit 20]`
+  xlyra route overview [--window-hours 24]
+  xlyra route candidates <model_key> [--debug]
+  xlyra route select --model <model_key> [--api-key ID] [--debug]
+  xlyra route failover --model <model_key> --failed-site-ids id1,id2 [--debug]
+  xlyra route traces [--model <model_key>] [--limit 20]`
 
 	if len(args) == 0 || args[0] == "-h" || args[0] == "--help" {
 		_, _ = fmt.Fprintln(a.Stdout, help)
@@ -304,9 +304,9 @@ func (a *App) runRoute(ctx context.Context, args []string) int {
 
 func (a *App) runCooldown(ctx context.Context, args []string) int {
 	const help = `用法:
-  xlyra-cli cooldown list
-  xlyra-cli cooldown create --site <site> [--site-model ID] [--credential ID] [--scope S] [--source S] --duration 300 --reason "..."
-  xlyra-cli cooldown clear --site <site> [--site-model ID] [--credential ID] [--source S]`
+  xlyra cooldown list
+  xlyra cooldown create --site <site> [--site-model ID] [--credential ID] [--scope S] [--source S] --duration 300 --reason "..."
+  xlyra cooldown clear --site <site> [--site-model ID] [--credential ID] [--source S]`
 
 	if len(args) == 0 || args[0] == "-h" || args[0] == "--help" {
 		_, _ = fmt.Fprintln(a.Stdout, help)

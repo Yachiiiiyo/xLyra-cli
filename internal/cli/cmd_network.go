@@ -38,12 +38,12 @@ func validateProxyPayloadURL(payload map[string]any) error {
 
 func (a *App) runProxy(ctx context.Context, args []string) int {
 	const help = `用法:
-  xlyra-cli proxy list
-  xlyra-cli proxy get <id|name>
-  xlyra-cli proxy create --name N --type http|https|socks5 --url U
-  xlyra-cli proxy update <id|name> [--name N] [--type T] [--url U]
-  xlyra-cli proxy delete <id|name>
-  xlyra-cli proxy test (<id|name> | --type T --url U)`
+  xlyra proxy list
+  xlyra proxy get <id|name>
+  xlyra proxy create --name N --type http|https|socks5 --url U
+  xlyra proxy update <id|name> [--name N] [--type T] [--url U]
+  xlyra proxy delete <id|name>
+  xlyra proxy test (<id|name> | --type T --url U)`
 
 	if len(args) == 0 || args[0] == "-h" || args[0] == "--help" {
 		_, _ = fmt.Fprintln(a.Stdout, help)
@@ -167,15 +167,15 @@ func (a *App) runProxy(ctx context.Context, args []string) int {
 
 func (a *App) runSite(ctx context.Context, args []string) int {
 	const help = `用法:
-  xlyra-cli site list [--enabled true|false] [--oauth all|only|exclude] [--type T]
-  xlyra-cli site get <id|slug>
-  xlyra-cli site create (--json '{...}' | --file <path> | --stdin)
-  xlyra-cli site update <id|slug> (--json '{...}' | --file <path> | --stdin)
-  xlyra-cli site enable|disable|delete|sync-models <id|slug>
-  xlyra-cli site set-gateway <id|slug> <k=v ...>
-  xlyra-cli site set-plugin-order <id|slug> <p1,p2,...>
-  xlyra-cli site refresh [<id|slug> | --all]
-  xlyra-cli site health <id|slug> [--history] [--check]`
+  xlyra site list [--enabled true|false] [--oauth all|only|exclude] [--type T]
+  xlyra site get <id|slug>
+  xlyra site create (--json '{...}' | --file <path> | --stdin)
+  xlyra site update <id|slug> (--json '{...}' | --file <path> | --stdin)
+  xlyra site enable|disable|delete|sync-models <id|slug>
+  xlyra site set-gateway <id|slug> <k=v ...>
+  xlyra site set-plugin-order <id|slug> <p1,p2,...>
+  xlyra site refresh [<id|slug> | --all]
+  xlyra site health <id|slug> [--history] [--check]`
 
 	if len(args) == 0 || args[0] == "-h" || args[0] == "--help" {
 		_, _ = fmt.Fprintln(a.Stdout, help)
@@ -334,10 +334,10 @@ func (a *App) runSite(ctx context.Context, args []string) int {
 
 func (a *App) runSiteGroup(ctx context.Context, args []string) int {
 	const help = `用法:
-  xlyra-cli site-group list
-  xlyra-cli site-group get|delete <id|name>
-  xlyra-cli site-group create [--name N] [--description D] [--site-ids id1,id2] [--json '{...}']
-  xlyra-cli site-group update <id|name> [--name N] [--description D] [--site-ids id1,id2] [--json '{...}']`
+  xlyra site-group list
+  xlyra site-group get|delete <id|name>
+  xlyra site-group create [--name N] [--description D] [--site-ids id1,id2] [--json '{...}']
+  xlyra site-group update <id|name> [--name N] [--description D] [--site-ids id1,id2] [--json '{...}']`
 
 	if len(args) == 0 || args[0] == "-h" || args[0] == "--help" {
 		_, _ = fmt.Fprintln(a.Stdout, help)
@@ -406,10 +406,10 @@ func (a *App) runSiteGroup(ctx context.Context, args []string) int {
 
 func (a *App) runSiteKey(ctx context.Context, args []string) int {
 	const help = `用法:
-  xlyra-cli site-key list <site>
-  xlyra-cli site-key update <site> <key-id> [--enabled B] [--name N] [--priority P] [--cost-multiplier M] [--cache-domain D]
-  xlyra-cli site-key set-model <site> <key-id> --model M [--enabled B] [--endpoint-mode ...] [--endpoint-types ...]
-  xlyra-cli site-key delete <site> <key-id>`
+  xlyra site-key list <site>
+  xlyra site-key update <site> <key-id> [--enabled B] [--name N] [--priority P] [--cost-multiplier M] [--cache-domain D]
+  xlyra site-key set-model <site> <key-id> --model M [--enabled B] [--endpoint-mode ...] [--endpoint-types ...]
+  xlyra site-key delete <site> <key-id>`
 
 	if len(args) == 0 || args[0] == "-h" || args[0] == "--help" {
 		_, _ = fmt.Fprintln(a.Stdout, help)
@@ -420,7 +420,7 @@ func (a *App) runSiteKey(ctx context.Context, args []string) int {
 	if sub == "create" {
 		return a.failPolicy(
 			extractRequestedFormat(args[1:]),
-			"一期禁止通过 xlyra-cli 创建站点上游 API Key（Tier 0）",
+			"一期禁止通过 xlyra 创建站点上游 API Key（Tier 0）",
 			"site-key",
 			"请在 Web 控制台站点设置中添加上游 Key",
 		)
@@ -541,10 +541,10 @@ func (a *App) runSiteKey(ctx context.Context, args []string) int {
 
 func (a *App) runSiteAccount(ctx context.Context, args []string) int {
 	const help = `用法:
-  xlyra-cli site-account list <site>
-  xlyra-cli site-account update <site> <cred-id> --enabled true|false
-  xlyra-cli site-account set-model <site> <cred-id> --model M [--enabled B] [--endpoint-mode ...] [--endpoint-types ...]
-  xlyra-cli site-account refresh <site> [<cred-id> | --all]`
+  xlyra site-account list <site>
+  xlyra site-account update <site> <cred-id> --enabled true|false
+  xlyra site-account set-model <site> <cred-id> --model M [--enabled B] [--endpoint-mode ...] [--endpoint-types ...]
+  xlyra site-account refresh <site> [<cred-id> | --all]`
 
 	if len(args) == 0 || args[0] == "-h" || args[0] == "--help" {
 		_, _ = fmt.Fprintln(a.Stdout, help)
@@ -664,9 +664,9 @@ func (a *App) runSiteAccount(ctx context.Context, args []string) int {
 
 func (a *App) runOAuth(ctx context.Context, args []string) int {
 	const help = `用法:
-  xlyra-cli oauth list
-  xlyra-cli oauth get|refresh <conn-id>
-  xlyra-cli oauth set-model <conn-id> --site-model-id ID --enabled true|false`
+  xlyra oauth list
+  xlyra oauth get|refresh <conn-id>
+  xlyra oauth set-model <conn-id> --site-model-id ID --enabled true|false`
 
 	if len(args) == 0 || args[0] == "-h" || args[0] == "--help" {
 		_, _ = fmt.Fprintln(a.Stdout, help)

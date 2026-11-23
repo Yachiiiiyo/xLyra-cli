@@ -51,16 +51,16 @@ for target in "${TARGETS[@]}"; do
   GOOS="${target%/*}"
   GOARCH="${target#*/}"
   STAGE_DIR="$OUT_DIR/.stage-${GOOS}-${GOARCH}"
-  ARCHIVE_NAME="xlyra-cli_${VERSION}_${GOOS}_${GOARCH}.tar.gz"
+  ARCHIVE_NAME="xlyra_${VERSION}_${GOOS}_${GOARCH}.tar.gz"
   ARCHIVE_PATH="$OUT_DIR/$ARCHIVE_NAME"
 
   mkdir -p "$STAGE_DIR"
   echo "Building ${GOOS}/${GOARCH} (${VERSION})..."
   CGO_ENABLED=0 GOOS="$GOOS" GOARCH="$GOARCH" \
-    go build -trimpath -ldflags="$LDFLAGS" -o "$STAGE_DIR/xlyra-cli" ./cmd/xlyra-cli
+    go build -trimpath -ldflags="$LDFLAGS" -o "$STAGE_DIR/xlyra" ./cmd/xlyra
 
-  chmod 0755 "$STAGE_DIR/xlyra-cli"
-  COPYFILE_DISABLE=1 tar -czf "$ARCHIVE_PATH" -C "$STAGE_DIR" xlyra-cli
+  chmod 0755 "$STAGE_DIR/xlyra"
+  COPYFILE_DISABLE=1 tar -czf "$ARCHIVE_PATH" -C "$STAGE_DIR" xlyra
   rm -rf "$STAGE_DIR"
 
   SHA256="$(sha256_file "$ARCHIVE_PATH")"

@@ -203,7 +203,7 @@ func ValidateProxyURLNoPassword(rawURL string) error {
 		if _, hasPassword := u.User.Password(); hasPassword {
 			return &ValidationError{
 				Code:    "policy_denied",
-				Message: "一期禁止通过 xlyra-cli 在代理 URL 中传入密码（Tier 0）",
+				Message: "一期禁止通过 xlyra 在代理 URL 中传入密码（Tier 0）",
 				Field:   "url",
 				Hint:    "请在 Web 控制台创建或修改带密码的网络代理",
 			}
@@ -266,7 +266,7 @@ func isSensitiveHeaderName(name string) bool {
 func sensitiveHeaderError(name string) error {
 	return &ValidationError{
 		Code:    "policy_denied",
-		Message: fmt.Sprintf("一期禁止通过 xlyra-cli 写入敏感鉴权请求头 %q（Tier 0）", name),
+		Message: fmt.Sprintf("一期禁止通过 xlyra 写入敏感鉴权请求头 %q（Tier 0）", name),
 		Field:   "request_headers",
 		Hint:    "请在 Web 控制台的站点设置中配置含密钥的请求头",
 	}

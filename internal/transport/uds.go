@@ -73,7 +73,7 @@ func FromEnv(lookup func(string) string) (Config, error) {
 		return Config{}, &Error{
 			Code:    "ctl_unavailable",
 			Message: "缺少环境变量 XLYRA_CTL_SOCK，无法连接 xlyra-server 控制面",
-			Hint:    "xlyra-cli 仅限内置 Agent 会话内通过 Control-Plane UDS 运行，不支持外部 TCP/HTTP 连接",
+			Hint:    "xlyra 仅限内置 Agent 会话内通过 Control-Plane UDS 运行，不支持外部 TCP/HTTP 连接",
 		}
 	}
 	if !filepath.IsAbs(sock) {
@@ -102,7 +102,7 @@ func FromEnv(lookup func(string) string) (Config, error) {
 	return Config{
 		SocketPath: filepath.Clean(sock),
 		Nonce:      strings.TrimSpace(lookup(EnvCtlNonce)),
-		UserAgent:  "xlyra-cli/" + version.Version,
+		UserAgent:  "xlyra/" + version.Version,
 	}, nil
 }
 

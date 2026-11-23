@@ -1,4 +1,4 @@
-// Package cli implements the xlyra-cli command router, help output, and UDS dispatch.
+// Package cli implements the xlyra command router, help output, and UDS dispatch.
 package cli
 
 import (
@@ -26,7 +26,7 @@ type Client interface {
 // ClientFactory builds a Client using the supplied environment lookup function.
 type ClientFactory func(lookup func(string) string) (Client, error)
 
-// App holds I/O streams and dependencies for xlyra-cli execution.
+// App holds I/O streams and dependencies for xlyra execution.
 type App struct {
 	Stdout        io.Writer
 	Stderr        io.Writer
@@ -75,7 +75,7 @@ func (a *App) Run(ctx context.Context, args []string) int {
 	}
 
 	if strings.HasPrefix(first, "-") {
-		return a.failInvalid("json", "invalid_argument", fmt.Sprintf("未知顶层参数: %s", first), "", "请先指定命令名或运行 xlyra-cli --help")
+		return a.failInvalid("json", "invalid_argument", fmt.Sprintf("未知顶层参数: %s", first), "", "请先指定命令名或运行 xlyra --help")
 	}
 
 	routes := map[string]handlerFunc{
@@ -107,7 +107,7 @@ func (a *App) Run(ctx context.Context, args []string) int {
 
 	fn, ok := routes[first]
 	if !ok {
-		return a.failInvalid("json", "invalid_argument", fmt.Sprintf("未知命令: %s", first), "", "运行 xlyra-cli --help 查看全部可用命令")
+		return a.failInvalid("json", "invalid_argument", fmt.Sprintf("未知命令: %s", first), "", "运行 xlyra --help 查看全部可用命令")
 	}
 	return fn(ctx, args[1:])
 }
@@ -139,7 +139,7 @@ func (a *App) runVersion(args []string) int {
 		return a.handleInputError("json", err)
 	}
 	if parsed.Global.Help {
-		_, _ = fmt.Fprintln(a.Stdout, "用法: xlyra-cli version [--format json|table|yaml]")
+		_, _ = fmt.Fprintln(a.Stdout, "用法: xlyra version [--format json|table|yaml]")
 		return protocol.ExitOK
 	}
 	env := protocol.NewSuccessEnvelope(version.Info(runtime.GOOS, runtime.GOARCH))
@@ -260,10 +260,10 @@ func (a *App) printSubHelp(cmd string) int {
 }
 
 func (a *App) printRootHelp() {
-	_, _ = fmt.Fprint(a.Stdout, `xlyra-cli - xLyra 内置 Agent 控制面命令行工具
+	_, _ = fmt.Fprint(a.Stdout, `xlyra - xLyra 内置 Agent 控制面命令行工具
 
 用法:
-  xlyra-cli <command> [subcommand] [flags]
+  xlyra <command> [subcommand] [flags]
 
 全局参数:
   --format json|table|yaml   输出格式（默认 json）

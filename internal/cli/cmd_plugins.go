@@ -10,20 +10,20 @@ import (
 
 func (a *App) runPlugin(ctx context.Context, args []string) int {
 	const help = `用法:
-  xlyra-cli plugin list
-  xlyra-cli plugin get|disable <plugin-id>
-  xlyra-cli plugin settings get <plugin-id>
-  xlyra-cli plugin settings set <plugin-id> (--json '{...}' | --file <path> | --stdin)
-  xlyra-cli plugin site-settings set <plugin-id> <site> (--json '{...}' | --file <path> | --stdin)
-  xlyra-cli plugin schedule get|set <plugin-id> [--enabled true|false]
-  xlyra-cli plugin subscription set <plugin-id> [--auto-update true|false | --enabled true|false | --json '{...}']
-  xlyra-cli plugin automation list|create <plugin-id> [--json '{...}']
-  xlyra-cli plugin automation update|delete <plugin-id> <automation-id> [--json '{...}']
-  xlyra-cli plugin bind-site|unbind-site <plugin-id> <site>
-  xlyra-cli plugin bind-protocol <plugin-id> <protocol>
-  xlyra-cli plugin enable <plugin-id> <version> [--grant-permissions ...] [--confirm-hosts ...] [--confirm-untrusted]
-  xlyra-cli plugin delete <plugin-id> [--version V]
-  xlyra-cli plugin trusted-keys list`
+  xlyra plugin list
+  xlyra plugin get|disable <plugin-id>
+  xlyra plugin settings get <plugin-id>
+  xlyra plugin settings set <plugin-id> (--json '{...}' | --file <path> | --stdin)
+  xlyra plugin site-settings set <plugin-id> <site> (--json '{...}' | --file <path> | --stdin)
+  xlyra plugin schedule get|set <plugin-id> [--enabled true|false]
+  xlyra plugin subscription set <plugin-id> [--auto-update true|false | --enabled true|false | --json '{...}']
+  xlyra plugin automation list|create <plugin-id> [--json '{...}']
+  xlyra plugin automation update|delete <plugin-id> <automation-id> [--json '{...}']
+  xlyra plugin bind-site|unbind-site <plugin-id> <site>
+  xlyra plugin bind-protocol <plugin-id> <protocol>
+  xlyra plugin enable <plugin-id> <version> [--grant-permissions ...] [--confirm-hosts ...] [--confirm-untrusted]
+  xlyra plugin delete <plugin-id> [--version V]
+  xlyra plugin trusted-keys list`
 
 	if len(args) == 0 || args[0] == "-h" || args[0] == "--help" {
 		_, _ = fmt.Fprintln(a.Stdout, help)
@@ -405,7 +405,7 @@ func (a *App) runPluginTrustedKeys(ctx context.Context, args []string, help stri
 	case "add", "create", "put", "delete", "remove":
 		return a.failPolicy(
 			extractRequestedFormat(args[1:]),
-			"禁止通过 xlyra-cli 增删 JS 插件信任公钥（Tier 0）",
+			"禁止通过 xlyra 增删 JS 插件信任公钥（Tier 0）",
 			"js-plugin-trusted-keys",
 			"请在 Web 控制台安全设置中管理信任公钥",
 		)
@@ -416,9 +416,9 @@ func (a *App) runPluginTrustedKeys(ctx context.Context, args []string, help stri
 
 func (a *App) runPluginMarket(ctx context.Context, args []string) int {
 	const help = `用法:
-  xlyra-cli plugin-market status|list|sync
-  xlyra-cli plugin-market get <plugin-id>
-  xlyra-cli plugin-market install <plugin-id> [--version V]`
+  xlyra plugin-market status|list|sync
+  xlyra plugin-market get <plugin-id>
+  xlyra plugin-market install <plugin-id> [--version V]`
 
 	if len(args) == 0 || args[0] == "-h" || args[0] == "--help" {
 		_, _ = fmt.Fprintln(a.Stdout, help)
