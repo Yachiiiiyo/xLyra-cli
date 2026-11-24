@@ -163,6 +163,7 @@ func (c *Client) Call(ctx context.Context, req protocol.CallRequest) (int, proto
 	httpReq.Header.Set("Content-Type", "application/json")
 	httpReq.Header.Set("Accept", "application/json")
 	httpReq.Header.Set(protocol.HeaderProtocol, strconv.Itoa(version.ProtocolVersion))
+	httpReq.Header.Set(protocol.HeaderCLIVersion, version.Version)
 	if c.cfg.Nonce != "" {
 		httpReq.Header.Set(protocol.HeaderNonce, c.cfg.Nonce)
 	}
@@ -219,5 +220,55 @@ func (c *Client) Call(ctx context.Context, req protocol.CallRequest) (int, proto
 			Err:     err,
 		}
 	}
+	annotateServerCompatibility(req, resp.Header, &env)
 	return resp.StatusCode, env, nil
+}
+
+func annotateServerCompatibility(req protocol.CallRequest, headers http.Header, env *protocol.Envelope) {
+	if env == nil {
+		return
+	}
+	serverVer := strings.TrimSpace(headers.Get(protocol.HeaderServerVersion))
+	schemaRaw := strings.TrimSpace(headers.Get(protocol.HeaderSchemaVersion))
+	serverSchema := 1
+	if schemaRaw != "" {
+		if parsed, err := strconv.Atoi(schemaRaw); err == nil && parsed > 0 {
+			serverSchema = parsed
+		}
+	}
+
+	if env.OK && req.Resource == "status" && req.Action == "get" {
+		if dataMap, ok := env.Data.(map[string]any); ok {
+			dataMap["cli_version"] = version.Version
+			dataMap["cli_min_schema_version"] = version.MinServerSchemaVersion
+			dataMap["server_schema_version"] = serverSchema
+			dataMap["compatible"] = serverSchema >= version.MinServerSchemaVersion
+			if serverSchema < version.MinServerSchemaVersion {
+				dataMap["compatibility_warning"] = serverTooOldHint(serverVer, serverSchema)
+			}
+		}
+		return
+	}
+
+	if !env.OK && env.Error != nil && serverSchema < version.MinServerSchemaVersion {
+		code := strings.ToLower(strings.TrimSpace(env.Error.Code))
+		msg := strings.ToLower(strings.TrimSpace(env.Error.Message))
+		if code == "not_implemented" || (code == "not_found" && strings.Contains(msg, "unknown operation")) {
+			hint := serverTooOldHint(serverVer, serverSchema)
+			if strings.TrimSpace(env.Error.Hint) == "" {
+				env.Error.Hint = hint
+			} else if !strings.Contains(env.Error.Hint, "schema v") {
+				env.Error.Hint = hint + " (" + env.Error.Hint + ")"
+			}
+		}
+	}
+}
+
+func serverTooOldHint(serverVer string, serverSchema int) string {
+	if serverVer != "" {
+		return fmt.Sprintf("当前连接的 xlyra-server (%s, control-plane schema v%d) 版本过旧，低于 xlyra-cli (%s) 要求的 schema v%d，缺少部分命令接口；请升级并重启 xlyra-server。",
+			serverVer, serverSchema, version.Version, version.MinServerSchemaVersion)
+	}
+	return fmt.Sprintf("当前连接的 xlyra-server (control-plane schema v%d) 版本过旧，低于 xlyra-cli (%s) 要求的 schema v%d，不支持该命令；请升级并重启 xlyra-server。",
+		serverSchema, version.Version, version.MinServerSchemaVersion)
 }

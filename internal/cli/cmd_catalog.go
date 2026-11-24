@@ -11,11 +11,12 @@ import (
 
 func (a *App) runModel(ctx context.Context, args []string) int {
 	const help = `用法:
-  xlyra model list [--provider P] [--category C] [--search Q]
+  xlyra model list [--provider P] [--category C] [--search Q] [--status S] [--page N] [--page-size N]
   xlyra model get <id|model_key> [--matrix]
   xlyra model create (--json '{...}' | --model-key K --display-name N --provider P ...)
   xlyra model update <id|model_key> (--json '{...}' | flags...)
   xlyra model delete <id|model_key>
+  xlyra model merge <source> <target>
   xlyra model alias add <model> <alias>
   xlyra model alias delete <model> <alias-id>
   xlyra model pricing set <model> [--input F] [--output F] [--cache-read-ratio F] [--cache-write-ratio F] [--cache-write-1h-ratio F]
@@ -42,6 +43,8 @@ func (a *App) runModel(ctx context.Context, args []string) int {
 		{Name: "model-key", Kind: input.FlagString},
 		{Name: "display-name", Kind: input.FlagString},
 		{Name: "status", Kind: input.FlagString},
+		{Name: "page", Kind: input.FlagInt},
+		{Name: "page-size", Kind: input.FlagInt},
 	}
 	parsed, ok, code := a.parse(args[1:], specs, help)
 	if !ok {
@@ -54,10 +57,16 @@ func (a *App) runModel(ctx context.Context, args []string) int {
 			return a.failInvalid(parsed.Global.Format, "invalid_argument", "model list 不接受位置参数", "", "")
 		}
 		params := map[string]any{}
-		for _, k := range []string{"provider", "category", "search"} {
+		for _, k := range []string{"provider", "category", "search", "status"} {
 			if v, exists := parsed.String(k); exists {
 				params[k] = v
 			}
+		}
+		if v, exists := parsed.Int("page"); exists {
+			params["page"] = v
+		}
+		if v, exists := parsed.Int("page-size"); exists {
+			params["page_size"] = v
 		}
 		return a.dispatch(ctx, parsed.Global, protocol.CallRequest{Resource: "model", Action: "list", Params: params})
 	case "get":
@@ -79,6 +88,16 @@ func (a *App) runModel(ctx context.Context, args []string) int {
 			return a.failInvalid(parsed.Global.Format, "invalid_argument", "model delete 需要 1 个 <id|model_key> 参数", "", "")
 		}
 		return a.dispatch(ctx, parsed.Global, protocol.CallRequest{Resource: "model", Action: "delete", Target: parsed.Positionals[0]})
+	case "merge":
+		if len(parsed.Positionals) != 2 {
+			return a.failInvalid(parsed.Global.Format, "invalid_argument", "model merge 需要 <source> <target> 两个模型标识参数", "", "")
+		}
+		return a.dispatch(ctx, parsed.Global, protocol.CallRequest{
+			Resource: "model",
+			Action:   "merge",
+			Target:   parsed.Positionals[0],
+			Payload:  map[string]any{"target_model_id": parsed.Positionals[1]},
+		})
 	case "create", "update":
 		if sub == "create" && len(parsed.Positionals) != 0 {
 			return a.failInvalid(parsed.Global.Format, "invalid_argument", "model create 不接受位置参数", "", "")
@@ -224,7 +243,7 @@ func (a *App) runModelPricing(ctx context.Context, args []string, help string) i
 
 func (a *App) runSiteModel(ctx context.Context, args []string) int {
 	const help = `用法:
-  xlyra site-model list [--site S] [--canonical M] [--enabled true|false]
+  xlyra site-model list [--site S] [--canonical M] [--enabled true|false] [--search Q] [--page N] [--page-size N]
   xlyra site-model create <site> --upstream-name N [--canonical M] [--endpoints ...] [--credential-ids ...] [--enabled B]
   xlyra site-model update <site> <model-id> [--enabled true|false] [--json '{...}']
   xlyra site-model batch-status <site> --ids id1,id2 --enabled true|false
@@ -242,6 +261,10 @@ func (a *App) runSiteModel(ctx context.Context, args []string) int {
 		{Name: "site", Kind: input.FlagString},
 		{Name: "canonical", Kind: input.FlagString},
 		{Name: "enabled", Kind: input.FlagBool},
+		{Name: "search", Kind: input.FlagString},
+		{Name: "page", Kind: input.FlagInt},
+		{Name: "page-size", Kind: input.FlagInt},
+		{Name: "limit", Kind: input.FlagInt},
 		{Name: "upstream-name", Kind: input.FlagString},
 		{Name: "endpoints", Kind: input.FlagCSV},
 		{Name: "credential-ids", Kind: input.FlagCSV},
@@ -268,6 +291,17 @@ func (a *App) runSiteModel(ctx context.Context, args []string) int {
 		}
 		if v, exists := parsed.Bool("enabled"); exists {
 			params["enabled"] = v
+		}
+		if v, exists := parsed.String("search"); exists {
+			params["search"] = v
+		}
+		if v, exists := parsed.Int("page"); exists {
+			params["page"] = v
+		}
+		if v, exists := parsed.Int("page-size"); exists {
+			params["page_size"] = v
+		} else if v, exists := parsed.Int("limit"); exists {
+			params["page_size"] = v
 		}
 		return a.dispatch(ctx, parsed.Global, protocol.CallRequest{Resource: "site-model", Action: "list", Params: params})
 	case "create":

@@ -213,7 +213,7 @@ func (a *App) runAPIKeyQuota(ctx context.Context, args []string, help string) in
 func (a *App) runRoute(ctx context.Context, args []string) int {
 	const help = `用法:
   xlyra route overview [--window-hours 24]
-  xlyra route candidates <model_key> [--debug]
+  xlyra route candidates <model_key> [--limit N] [--debug]
   xlyra route select --model <model_key> [--api-key ID] [--debug]
   xlyra route failover --model <model_key> --failed-site-ids id1,id2 [--debug]
   xlyra route traces [--model <model_key>] [--limit 20]`
@@ -254,6 +254,9 @@ func (a *App) runRoute(ctx context.Context, args []string) int {
 		params := map[string]any{}
 		if v, exists := parsed.Bool("debug"); exists {
 			params["debug"] = v
+		}
+		if v, exists := parsed.Int("limit"); exists {
+			params["limit"] = v
 		}
 		return a.dispatch(ctx, parsed.Global, protocol.CallRequest{
 			Resource: "route",

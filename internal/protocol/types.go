@@ -17,8 +17,11 @@ const (
 
 // Control-plane HTTP headers over Unix Domain Socket.
 const (
-	HeaderProtocol = "X-Xlyra-Ctl-Protocol"
-	HeaderNonce    = "X-Xlyra-Ctl-Nonce"
+	HeaderProtocol      = "X-Xlyra-Ctl-Protocol"
+	HeaderNonce         = "X-Xlyra-Ctl-Nonce"
+	HeaderCLIVersion    = "X-Xlyra-Cli-Version"
+	HeaderServerVersion = "X-Xlyra-Server-Version"
+	HeaderSchemaVersion = "X-Xlyra-Ctl-Schema-Version"
 )
 
 // CallRequest is the unified request payload sent to POST http://ctl.local/v1/call.

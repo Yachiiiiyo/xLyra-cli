@@ -286,7 +286,7 @@ func (a *App) printRootHelp() {
   site-key                   站点上游 Key 元数据管理 (list|update|set-model|delete)
   site-account               站点账号池管理 (list|update|set-model|refresh)
   oauth                      OAuth 连接管理 (list|get|set-model|refresh)
-  model                      规范模型与别名/默认定价 (list|get|create|update|delete|alias|pricing)
+  model                      规范模型与别名/合并/默认定价 (list|get|create|update|delete|merge|alias|pricing)
   site-model                 站点模型管理 (list|create|update|batch-status|bind-canonical|test|delete)
   pricing                    站点模型定价管理 (list|set|bulk-set|reset)
   api-key                    下游 API Key 管理 (list|get|create|update|reorder|set-*|quota|check-model|rotate|delete)

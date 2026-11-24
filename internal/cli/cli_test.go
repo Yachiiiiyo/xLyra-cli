@@ -214,13 +214,14 @@ func TestAll14DomainRoutesAndOptions(t *testing.T) {
 		{[]string{"oauth", "refresh", "conn-1"}, "oauth", "refresh", "conn-1", ""},
 
 		// E
-		{[]string{"model", "list", "--provider", "openai"}, "model", "list", "", ""},
+		{[]string{"model", "list", "--provider", "openai", "--status", "active", "--page", "2", "--page-size", "25"}, "model", "list", "", ""},
 		{[]string{"model", "get", "gpt-4o", "--matrix"}, "model", "get", "gpt-4o", ""},
+		{[]string{"model", "merge", "deepseek-v4.1-flash", "deepseek-flash"}, "model", "merge", "deepseek-v4.1-flash", ""},
 		{[]string{"model", "alias", "add", "gpt-4o", "chatgpt-4o"}, "model", "alias-add", "gpt-4o", ""},
 		{[]string{"model", "alias", "delete", "gpt-4o", "a1"}, "model", "alias-delete", "gpt-4o", "a1"},
 		{[]string{"model", "pricing", "set", "gpt-4o", "--input", "2.5", "--output", "10"}, "model", "pricing-set", "gpt-4o", ""},
 		{[]string{"model", "pricing", "reset", "gpt-4o"}, "model", "pricing-reset", "gpt-4o", ""},
-		{[]string{"site-model", "list", "--site", "openrouter", "--enabled", "true"}, "site-model", "list", "", ""},
+		{[]string{"site-model", "list", "--site", "openrouter", "--canonical", "deepseek-flash", "--enabled", "true", "--search", "flash", "--page", "2", "--page-size", "20"}, "site-model", "list", "", ""},
 		{[]string{"site-model", "create", "openrouter", "--upstream-name", "openai/gpt-4o", "--endpoints", "chat,responses"}, "site-model", "create", "openrouter", ""},
 		{[]string{"site-model", "batch-status", "openrouter", "--ids", "m1,m2", "--enabled", "false"}, "site-model", "batch-status", "openrouter", ""},
 		{[]string{"site-model", "bind-canonical", "sm1", "none"}, "site-model", "bind-canonical", "sm1", ""},
@@ -243,7 +244,7 @@ func TestAll14DomainRoutesAndOptions(t *testing.T) {
 		{[]string{"api-key", "check-model", "k1", "gpt-4o"}, "api-key", "check-model", "k1", "gpt-4o"},
 		{[]string{"api-key", "rotate", "k1"}, "api-key", "rotate", "k1", ""},
 		{[]string{"route", "overview", "--window-hours", "12"}, "route", "overview", "", ""},
-		{[]string{"route", "candidates", "gpt-4o", "--debug"}, "route", "candidates", "gpt-4o", ""},
+		{[]string{"route", "candidates", "gpt-4o", "--limit", "10", "--debug"}, "route", "candidates", "gpt-4o", ""},
 		{[]string{"route", "select", "--model", "gpt-4o", "--api-key", "k1", "--debug"}, "route", "select", "", ""},
 		{[]string{"route", "failover", "--model", "gpt-4o", "--failed-site-ids", "s1,s2"}, "route", "failover", "", ""},
 		{[]string{"route", "traces", "--model", "gpt-4o", "--limit", "10"}, "route", "traces", "", ""},
@@ -393,5 +394,58 @@ func TestClientSidePolicyAndWorkspaceBlocks(t *testing.T) {
 		if code != protocol.ExitPolicyDenied || env.OK || env.Error == nil || env.Error.Code != "policy_denied" {
 			t.Fatalf("expected exit 4 policy_denied for %v, got code=%d out=%s", args, code, out)
 		}
+	}
+}
+
+func TestCatalogAndRouteNewFlagsAndPayloads(t *testing.T) {
+	sock, calls := startMockUDSServer(t, func(req protocol.CallRequest, _ *http.Request) mockResponse {
+		return mockResponse{
+			Status:   http.StatusOK,
+			Envelope: protocol.NewSuccessEnvelope(map[string]any{"ok": true}),
+		}
+	})
+
+	// 1. model merge
+	code, out, env := runCLIWithEnv(t, sock, "n1", "", "model", "merge", "deepseek-v4.1-flash", "deepseek-flash")
+	if code != protocol.ExitOK || !env.OK {
+		t.Fatalf("model merge failed: code=%d out=%s", code, out)
+	}
+	last := (*calls)[len(*calls)-1].Req
+	payload, _ := last.Payload.(map[string]any)
+	if last.Target != "deepseek-v4.1-flash" || payload["target_model_id"] != "deepseek-flash" {
+		t.Fatalf("unexpected model merge req: %+v", last)
+	}
+
+	// 2. model list pagination & status
+	code, out, env = runCLIWithEnv(t, sock, "n1", "", "model", "list", "--provider", "deepseek", "--status", "active", "--page", "2", "--page-size", "15")
+	if code != protocol.ExitOK || !env.OK {
+		t.Fatalf("model list failed: code=%d out=%s", code, out)
+	}
+	last = (*calls)[len(*calls)-1].Req
+	if last.Params["provider"] != "deepseek" || last.Params["status"] != "active" ||
+		last.Params["page"] != json.Number("2") || last.Params["page_size"] != json.Number("15") {
+		t.Fatalf("unexpected model list params: %#v", last.Params)
+	}
+
+	// 3. site-model list filters & pagination
+	code, out, env = runCLIWithEnv(t, sock, "n1", "", "site-model", "list", "--site", "openrouter", "--canonical", "deepseek-flash", "--enabled", "true", "--search", "flash", "--page", "2", "--page-size", "20")
+	if code != protocol.ExitOK || !env.OK {
+		t.Fatalf("site-model list failed: code=%d out=%s", code, out)
+	}
+	last = (*calls)[len(*calls)-1].Req
+	if last.Params["site"] != "openrouter" || last.Params["canonical"] != "deepseek-flash" ||
+		last.Params["enabled"] != true || last.Params["search"] != "flash" ||
+		last.Params["page"] != json.Number("2") || last.Params["page_size"] != json.Number("20") {
+		t.Fatalf("unexpected site-model list params: %#v", last.Params)
+	}
+
+	// 4. route candidates --limit & --debug
+	code, out, env = runCLIWithEnv(t, sock, "n1", "", "route", "candidates", "deepseek-flash", "--limit", "5", "--debug")
+	if code != protocol.ExitOK || !env.OK {
+		t.Fatalf("route candidates failed: code=%d out=%s", code, out)
+	}
+	last = (*calls)[len(*calls)-1].Req
+	if last.Target != "deepseek-flash" || last.Params["limit"] != json.Number("5") || last.Params["debug"] != true {
+		t.Fatalf("unexpected route candidates req: %+v", last)
 	}
 }
